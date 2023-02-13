@@ -1,60 +1,29 @@
-int data = 4;
-int latch = 5;
-int clock = 6;
-char common = 'c';
+#include <stdio.h>
+
+const int Clock = 10;
+const int latch = 9;
+const int data = 8;
+//byte value = B11111100;
 
 void setup() {
-  pinMode(data, OUTPUT); // shift
-  pinMode(latch, OUTPUT); // latch
-  pinMode(clock, OUTPUT); // clock
-
-  Serial.begin(9600);
+  // put your setup code here, to run once:
+  pinMode(Clock, OUTPUT);
+  pinMode(latch, OUTPUT);
+  pinMode(data, OUTPUT);
 }
 
 void loop() {
-  for (int i=0; i<=9; i++) { 
-    byte bits = binary(i);
-    display(bits);
+  // put your main code here, to run repeatedly:
+  byte bin_list[] = {B11111100, B01100000, B11011010, B11110010};
+    //for (int i=0; i <= sizeof(bin_list); i++) {
+    digitalWrite(latch, LOW);
+    shiftOut(data, Clock, LSBFIRST, bin_list[1]);
+    digitalWrite(latch, HIGH);
     delay(500);
-  }
+    digitalWrite(latch, LOW);
+    shiftOut(data, Clock, LSBFIRST, bin_list[2]);
+    digitalWrite(latch, HIGH);
+    delay(500);
+  //}
 
-}
-
-void display(byte eightBits) {
-  if (common == 'c') {
-    eightBits = eightBits ^ B11111111;
-  }
-  digitalWrite(latch, LOW);
-  shiftOut(data, clock, LSBFIRST, eightBits);
-  digitalWrite(latch, HIGH);
-
-}
-
-byte binary(int letter) {
-  Serial.println(letter);
-  switch(letter) {
-    case 0:
-      Serial.print("0");    
-      return B11110110;
-      
-      break;
-    case 1:
-      Serial.print("1");
-      return B11110110;
-      break;
-    case 2:
-      return B11110110;
-      break;
-    case 3:
-      return B11110110;
-      break;
-    case 4:
-      return B11110110;
-      break;
-    case 9:
-      return B11110110;
-      break;
-    default:
-      break;
-  }
 }
