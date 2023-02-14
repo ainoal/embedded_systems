@@ -2,7 +2,7 @@
  * GccApplication3.c
  *
  * Created: 7.2.2023 10:39:28
- * Author : r1623
+ * Author : ainol
  */ 
 
 #define F_CPU 16000000UL
