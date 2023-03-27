@@ -1,10 +1,10 @@
-void setup() {
-  Serial.begin(9600);
-}
-
 int state = 1;
 int prevFloor = 1;
 int nextFloor = 1;
+
+void setup() {
+  Serial.begin(9600);
+}
 
 void loop() {
 
@@ -18,7 +18,7 @@ void loop() {
       temp = Serial.parseInt();
       if (nextFloor > 6) {
         state = 5;
-      }else if (nextFloor < 1) {
+      } else if (nextFloor < 1) {
         state = 5;
       } else if (nextFloor > prevFloor) {
         state = 2;
