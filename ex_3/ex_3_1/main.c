@@ -19,6 +19,16 @@ int main(void)
 
     while (1) 
     {
+        PORTB &= ~(1 << PB0);
+        _delay_ms(1000);
+        PORTB &= ~(1 << PB1);
+        _delay_ms(1000);
+        PORTB &= ~(1 << PB2);
+        _delay_ms(1000);
+        PORTB &= ~(1 << PB3);
+
+        _delay_ms(1000);
+        
         PORTB |= (1 << PB0);
         _delay_ms(1000);
         PORTB |= (1 << PB1);
