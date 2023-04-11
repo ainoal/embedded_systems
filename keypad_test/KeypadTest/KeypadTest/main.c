@@ -24,6 +24,9 @@ int main(void)
     DDRB |= (1 << PB3);
     /******************************************************/
     
+    char *password = "0123";
+    int idx = 0;
+    
     // Set digital pins 0-3 (rows) as output and 4-7 (columns) as input
     DDRD |= 0b00001111;
     _delay_ms(1);
@@ -33,14 +36,7 @@ int main(void)
     int key_pressed = 0;
     
     while (1) 
-    {
-        /*PORTB &= ~(1 << PB0);
-        _delay_ms(1000);
-        PORTB |= (1 << PB0);
-        _delay_ms(1000);
-        PORTB &= ~(1 << PB0);
-        _delay_ms(1000);*/
-        
+    {           
         if (PIND != 0b11110000) {     // If any of row pins goes low (!??)
             key_pressed = PIND;
             _delay_ms(10);
@@ -53,155 +49,183 @@ int main(void)
             
             if (key_pressed == 0b01110111) {
                 // Key 1 pressed
-                PORTB &= ~(1 << PB0);
-                _delay_ms(1000);
-                PORTB |= (1 << PB0);
-                _delay_ms(1000);
-                PORTB &= ~(1 << PB0);
-                _delay_ms(1000);
+                if (password[idx] == '1') {
+                    led_test();
+                }
+                else {                
+                    ;
+                }                    
             } 
             else if (key_pressed == 0b01111011) {
                 // Key 2 pressed
-                PORTB &= ~(1 << PB0);
-                _delay_ms(1000);
-                PORTB |= (1 << PB0);
-                _delay_ms(1000);
-                PORTB &= ~(1 << PB0);
-                _delay_ms(1000);
+                if (password[idx] == '2') {
+                    led_test();
+                }
+                else {
+                    ;
+                }
             } 
             else if (key_pressed == 0b01111101) {
                 // Key 3 pressed
-                PORTB &= ~(1 << PB0);
-                _delay_ms(1000);
-                PORTB |= (1 << PB0);
-                _delay_ms(1000);
-                PORTB &= ~(1 << PB0);
-                _delay_ms(1000);
+                if (password[idx] == '3') {
+                    led_test();
+                }
+                else {
+                    ;
+                }
             } 
             else if (key_pressed == 0b01111110) {
                 // A
-                PORTB &= ~(1 << PB0);
-                _delay_ms(1000);
-                PORTB |= (1 << PB0);
-                _delay_ms(1000);
-                PORTB &= ~(1 << PB0);
-                _delay_ms(1000);
+                if (password[idx] == 'A') {
+                    led_test();
+                }
+                else {
+                    ;
+                }
             } 
             else if (key_pressed == 0b10110111) {
                 // 4
-                PORTB &= ~(1 << PB0);
-                _delay_ms(1000);
-                PORTB |= (1 << PB0);
-                _delay_ms(1000);
-                PORTB &= ~(1 << PB0);
-                _delay_ms(1000);
+                if (password[idx] == '4') {
+                    led_test();
+                }
+                else {
+                    ;
+                }
             } 
             else if (key_pressed == 0b10111011) {
                 // 5
-                PORTB &= ~(1 << PB0);
-                _delay_ms(1000);
-                PORTB |= (1 << PB0);
-                _delay_ms(1000);
-                PORTB &= ~(1 << PB0);
-                _delay_ms(1000);
+                if (password[idx] == '5') {
+                    led_test();
+                }
+                else {
+                    ;
+                }
             } 
             else if (key_pressed == 0b10111101) {
                 // 6
-                PORTB &= ~(1 << PB0);
-                _delay_ms(1000);
-                PORTB |= (1 << PB0);
-                _delay_ms(1000);
-                PORTB &= ~(1 << PB0);
-                _delay_ms(1000);
+                if (password[idx] == '6') {
+                    led_test();
+                }
+                else {
+                    ;
+                }
             } 
             else if (key_pressed == 0b10111110) {
                 // B
-                PORTB &= ~(1 << PB0);
-                _delay_ms(1000);
-                PORTB |= (1 << PB0);
-                _delay_ms(1000);
-                PORTB &= ~(1 << PB0);
-                _delay_ms(1000);
+                if (password[idx] == 'B') {
+                    led_test();
+                }
+                else {
+                    ;
+                }
             } 
             else if (key_pressed == 0b11010111) {
                 // 7
-                PORTB &= ~(1 << PB0);
-                _delay_ms(1000);
-                PORTB |= (1 << PB0);
-                _delay_ms(1000);
-                PORTB &= ~(1 << PB0);
-                _delay_ms(1000);
+                if (password[idx] == '7') {
+                    led_test();
+                }
+                else {
+                    ;
+                }
             } 
             else if (key_pressed == 0b11011011) {
                 // 8
-                PORTB &= ~(1 << PB0);
-                _delay_ms(1000);
-                PORTB |= (1 << PB0);
-                _delay_ms(1000);
-                PORTB &= ~(1 << PB0);
-                _delay_ms(1000);
+                if (password[idx] == '8') {
+                    led_test();
+                }
+                else {
+                    ;
+                }
             } 
             else if (key_pressed == 0b11011101) {
                 // 9
-                PORTB &= ~(1 << PB0);
-                _delay_ms(1000);
-                PORTB |= (1 << PB0);
-                _delay_ms(1000);
-                PORTB &= ~(1 << PB0);
-                _delay_ms(1000);
+                if (password[idx] == '9') {
+                    led_test();
+                }
+                else {
+                    ;
+                }
             } 
             else if (key_pressed == 0b11011110) {
                 // C
-                PORTB &= ~(1 << PB0);
-                _delay_ms(1000);
-                PORTB |= (1 << PB0);
-                _delay_ms(1000);
-                PORTB &= ~(1 << PB0);
-                _delay_ms(1000);
+                if (password[idx] == 'C') {
+                    led_test();
+                }
+                else {
+                    ;
+                }
             } 
             else if (key_pressed == 0b11100111) {
                 // *
-                PORTB &= ~(1 << PB0);
-                _delay_ms(1000);
-                PORTB |= (1 << PB0);
-                _delay_ms(1000);
-                PORTB &= ~(1 << PB0);
-                _delay_ms(1000);
+                if (password[idx] == '*') {
+                    led_test();
+                }
+                else {
+                    ;
+                }
             } 
             else if (key_pressed == 0b11101011) {
                 // 0
-                PORTB &= ~(1 << PB0);
-                _delay_ms(1000);
-                PORTB |= (1 << PB0);
-                _delay_ms(1000);
-                PORTB &= ~(1 << PB0);
-                _delay_ms(1000);
+                if (password[idx] == '0') {
+                    led_test();
+                }
+                else {
+                    ;
+                }
             } 
             else if (key_pressed == 0b11101101) {
                 // #
-                PORTB &= ~(1 << PB0);
-                _delay_ms(1000);
-                PORTB |= (1 << PB0);
-                _delay_ms(1000);
-                PORTB &= ~(1 << PB0);
-                _delay_ms(1000);
+                if (password[idx] == '#') {
+                    led_test();
+                }
+                else {
+                    ;
+                }
             } 
             else if (key_pressed == 0b11101110) {
                 // D
-                PORTB &= ~(1 << PB0);
-                _delay_ms(1000);
-                PORTB |= (1 << PB0);
-                _delay_ms(1000);
-                PORTB &= ~(1 << PB0);
-                _delay_ms(1000);
+                if (password[idx] == 'D') {
+                    led_test();
+                }
+                else {
+                    ;
+                }
             }
+            
+            if (PIND != 0b11110000) {
+                
+                while (PIND != 0b00001111){
+                    ;
+                    //led_test();
+                    //wait
+                }                
+                //led_test();
+            }
+            //led_test();
+            
+            /*while (PIND != 0b11110000){
+                ;
+                //wait
+                //led_test();
+            }*/
             
             DDRD ^= 0b11111111;
             _delay_ms(1);
             PORTD ^= 0b11111111;
             key_pressed = 0;
+            idx +=1;
             _delay_ms(10);
         }
     }    
 }
+
+void led_test(){
+    PORTB &= ~(1 << PB0);
+    _delay_ms(1000);
+    PORTB |= (1 << PB0);
+    _delay_ms(1000);
+    PORTB &= ~(1 << PB0);
+    _delay_ms(1000);
+}
+
 
