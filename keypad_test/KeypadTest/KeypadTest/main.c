@@ -247,14 +247,15 @@ int compare(char *password, char *given_password){
     if (strcmp(password, given_password) != 0) {
         // Wrong password
         led_test();
+        led_test();
+        led_test();
+        led_test();
+        led_test();
+        led_test();
+        led_test();
     } 
     else {
         // Correct password
-        led_test();
-        led_test();
-        led_test();
-        led_test();
-        led_test();
         led_test();
     }
     return 0;
