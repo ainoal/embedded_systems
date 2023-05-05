@@ -24,6 +24,7 @@
 volatile int8_t state = 0;
 
 void USART_init(unsigned int ubrr);
+void alarm_sound(void);
 
 int main(void)
 {   
@@ -38,6 +39,15 @@ int main(void)
     
     // initialize display, cursor off
     lcd_init(LCD_DISP_ON);
+     
+    // For alarm: set up the 16-bit timer/counter3, mode 9
+    TCCR3B = 0;         // Reset timer/counter 3
+    TCNT3  = 0;
+    TCCR3A |= (1 << 6); // Set compare output mode to toggle
+    // Mode 9 phase correct
+    TCCR3A |= (1 << 0); // Set register A WGM[1:0] bits
+    TCCR3B |= (1 << 4); // Set register B WBM[3:2] bits
+    TIMSK3 |= (1 << 1); // Enable compare match A interrupt
     
     while (1) 
     {
@@ -78,11 +88,15 @@ int main(void)
             case TRIGGERED_WRONGPASSWORD:
                 lcd_clrscr();
                 lcd_puts("Wrong password");
+                _delay_ms(2000);
+                alarm_sound();                              
                 break;
                 
             case TRIGGERED_TOOSLOW:
                 lcd_clrscr();
-                lcd_puts("You did not give password on time");
+                lcd_puts("Time ran up");
+                _delay_ms(2000);
+                alarm_sound();
                 break;
                 
             default:
@@ -102,4 +116,11 @@ void USART_init(unsigned int ubrr) {
     
     // Set frame format: 8data, 2stop bit
     UCSR0C = (1<<USBS0) | (3<<UCSZ00);
+}
+
+void alarm_sound() {
+    // Make alarm go off
+    OCR3A = 15296; //  C5 523 Hz, no prescaler
+    // Enable timer/counter
+    TCCR3B |= (1 << 0); // set prescaling to 1 (no prescaling)
 }
