@@ -9,7 +9,7 @@
 
 //#define F_CPU 1000000
 
-#include "uart.h"
+//#include "uart.h"
 #include <avr/io.h>
 #include <util/delay.h>
 #include <stdio.h>
@@ -50,7 +50,7 @@ int main(void)
     
     while (1) 
     {
-        
+
         if (PIND != 0b11110000) {     // If any of row pins goes low (!??)
             key_pressed = PIND;
             _delay_ms(10);

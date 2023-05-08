@@ -13,7 +13,7 @@
 #include <avr/io.h>
 #include <util/delay.h>
 #include <avr/interrupt.h>
-#include "lcd.h" // lcd header file made by Peter Fleury
+#include "lcd.h"    // lcd header file made by Peter Fleury
 
 // States for state machine
 #define IDLE 0
@@ -25,6 +25,8 @@ volatile int8_t state = 0;
 
 void USART_init(unsigned int ubrr);
 void alarm_sound(void);
+
+char display_buffer[16];
 
 int main(void)
 {   
@@ -89,7 +91,7 @@ int main(void)
                 lcd_clrscr();
                 lcd_puts("Wrong password");
                 _delay_ms(2000);
-                alarm_sound();                              
+                alarm_sound();                        
                 break;
                 
             case TRIGGERED_TOOSLOW:
@@ -123,4 +125,6 @@ void alarm_sound() {
     OCR3A = 15296; //  C5 523 Hz, no prescaler
     // Enable timer/counter
     TCCR3B |= (1 << 0); // set prescaling to 1 (no prescaling)
+    _delay_ms(2000);
+    //TCCR3B &= (0 << 0);
 }
