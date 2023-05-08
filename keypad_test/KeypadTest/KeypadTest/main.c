@@ -15,55 +15,102 @@
 #include <stdio.h>
 #include <string.h>
 
-void led_test();
-int compare(char *password, char *given_password);
+
+#define BITMASK_D 0b00000011
+#define BITMASK_B 0b111111
+
+void led_test(void){
+    PORTD &= ~(1 << PD3);
+    _delay_ms(1000);
+    PORTD |= (1 << PD3);
+    _delay_ms(1000);
+    PORTD &= ~(1 << PD3);
+    _delay_ms(1000);
+}
+
+int compare(char *password, char *given_password){
+    if (strcmp(password, given_password) != 0) {
+        led_test();
+        led_test();
+        led_test();
+        led_test();
+        led_test();
+        led_test();
+        led_test();
+        return 0;
+    }
+    else {
+        return 1;
+    }
+}
 
 int main(void)
 {
     /********************testing****************************/
-    DDRB |= (1 << PB0);
-    DDRB |= (1 << PB1);
-    DDRB |= (1 << PB2);
-    DDRB |= (1 << PB3);
+    //DDRD |= (1 << PD3);
     
-    /*char input;
+    char input;
     FILE uart_output = FDEV_SETUP_STREAM(USART_transmit, NULL, _FDEV_SETUP_WRITE);
     FILE uart_input = FDEV_SETUP_STREAM(NULL, USART_receive, _FDEV_SETUP_READ);
         
     USART_init(UBRR);
         
     stdout = &uart_output;
-    stdin = &uart_input;*/
+    stdin = &uart_input;
     /******************************************************/
     
     char* password = "0123";
     char* given_password = "xxxx";
     int idx = 0;
     
-    // Set digital pins 0-3 (rows) as output and 4-7 (columns) as input
-    DDRD |= 0b00001111;
+    // Set digital pins 6-9 (rows) as output and 10-13 (columns) as input
+    DDRD |= 0b00000000;
+    DDRB |= 0b001111;
     _delay_ms(1);
     
-    PORTD = 0b11110000;    // Power the row pins
+    // Power the row pins
+    //PORTD |= (1 << PD6) | (1 << PD7);
+    PORTD = 0b00000011;
+    PORTB = 0b00110000;
     
-    int key_pressed = 0;
+    uint8_t key_pressed = 0;
+    uint8_t keypad_vals;
+    uint8_t portb_vals;
+    uint8_t portd_vals;
     
     while (1) 
-    {
+    { 
+        portd_vals = ((PIND & BITMASK_D) << 6);
+        portb_vals = PINB & BITMASK_B;
+        keypad_vals = portd_vals | portb_vals;
         
-        if (PIND != 0b11110000) {     // If any of row pins goes low (!??)
-            key_pressed = PIND;
+        printf("Keypad_vals %d\n\r", keypad_vals);
+        keypad_vals &= 0b00001111;
+        
+        printf("%d %d %d PIND: %d\n\r", keypad_vals, portd_vals, portb_vals, PIND);
+        if (keypad_vals != 0b00000000) {     // If any of row pins goes low (!??)
+            printf("loop\n\r");
+            key_pressed = keypad_vals;
             _delay_ms(10);
-            DDRD ^= 0b11111111;      // Make rows as inputs and columns as outputs
+            
+            // Make rows as inputs and columns as outputs
+            DDRD ^= 0b00000011;
+            DDRB ^= 0b00111111;
+            
             _delay_ms(1);
-             PORTD ^= 0b11111111;        // Power the columns
+             PORTB ^= 0b00001111;        // Power the columns
             _delay_ms(100);
             
-            key_pressed |= PIND;    // The variable has now both row and column values as 0, others as 1
+            portd_vals = ((PIND & BITMASK_D) << 6);
+            portb_vals = PINB & BITMASK_B;
+            keypad_vals = portd_vals | portb_vals;
+            keypad_vals &= 0b11110000;
+            
+            key_pressed |= keypad_vals;    // The variable has now both row and column values as 0, others as 1
+            printf("%d\n\r", key_pressed);
             
             if (key_pressed == 0b01110111) {
                 // Key 1 pressed
-                //printf("1");
                 given_password[idx] = '1';
                 if (password[idx] == '1') {
                     led_test();
@@ -231,9 +278,15 @@ int main(void)
                 }
             }*/
             
-            DDRD ^= 0b11111111;
+            // Set digital pins 6-9 (rows) as output and 10-13 (columns) as input
+            DDRD |= 0b00000000;
+            DDRB |= 0b001111;
             _delay_ms(1);
-            PORTD ^= 0b11111111;
+            
+            // Power the row pins
+            PORTD = 0b00000011;
+            PORTB = 0b00110000;
+            
             key_pressed = 0;
             idx +=1;
             //printf("%i \n", idx);
@@ -242,30 +295,3 @@ int main(void)
     }
 }
 
-int compare(char *password, char *given_password){
-    //printf("%s", given_password);
-    if (strcmp(password, given_password) != 0) {
-        // Wrong password
-        led_test();
-        led_test();
-        led_test();
-        led_test();
-        led_test();
-        led_test();
-        led_test();
-    } 
-    else {
-        // Correct password
-        led_test();
-    }
-    return 0;
-}
-
-void led_test(){
-    PORTB &= ~(1 << PB0);
-    _delay_ms(1000);
-    PORTB |= (1 << PB0);
-    _delay_ms(1000);
-    PORTB &= ~(1 << PB0);
-    _delay_ms(1000);
-}
