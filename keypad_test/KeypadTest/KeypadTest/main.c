@@ -13,7 +13,6 @@
 #include <stdio.h>
 #include <string.h>
 
-
 #define BITMASK_D 0b00000011
 #define BITMASK_B 0b00111111
 
@@ -64,13 +63,22 @@ int main(void)
     // Set digital pins 6-9 (rows) as output and 10-13 (columns) as input
     DDRD = 0b00000000;
     DDRB = 0b001111;
-    _delay_ms(100);
+    _delay_ms(10);
+    
+    // Set digital pins 6-9 (rows) as input and 10-13 (columns) as output
+    /*DDRD = 0b00000011;
+    DDRB = 0b110000;
+    _delay_ms(10);*/
     
     // Power the row pins
-    //PORTD |= (1 << PD6) | (1 << PD7);
     PORTD = 0b00000011;
     PORTB = 0b00110000;
-    _delay_ms(100);
+    _delay_ms(10);
+    
+    // Power the column pins
+    /*PORTD = 0b00000000;
+    PORTB = 0b00001111;
+    _delay_ms(10);*/
     
     uint8_t key_pressed = 0;
     uint8_t keypad_vals;
@@ -80,24 +88,33 @@ int main(void)
     while (1) 
     { 
         _delay_ms(100);
+        printf("PIND %d ", PIND);
         portd_vals = ((PIND & BITMASK_D) << 6);
+        printf("portd_vals %d ", portd_vals);
+        _delay_ms(100);
+        
+        printf("PINB %d ", PINB);
         portb_vals = PINB & BITMASK_B;
+        printf("portb_vals %d ", portb_vals);
+        _delay_ms(100);
+
         keypad_vals = portd_vals | portb_vals;
         
-        printf("Keypad_vals %d", keypad_vals);
-        keypad_vals &= 0b00001111;
+        printf("Keypad_vals %d ", keypad_vals);
+        //keypad_vals &= 0b11110000;
         printf("Keypad_vals %d\n\r", keypad_vals);
-        //printf("%d %d %d PIND: %d\n\r", keypad_vals, portd_vals, portb_vals, PIND);
+        //printf("%d %d %d\n\r", keypad_vals, portd_vals, portb_vals);
         if (keypad_vals != 0b00000000) {     // If any of row pins goes low (!??)
             printf("loop\n\r");
             key_pressed = keypad_vals;
+            printf("%d\n\r", keypad_vals);
             _delay_ms(10);
             
             // Make rows as inputs and columns as outputs
             DDRD ^= 0b00000011;
             DDRB ^= 0b00111111;
             
-            _delay_ms(1);
+            _delay_ms(10);
              PORTB ^= 0b00001111;        // Power the columns
             _delay_ms(100);
             
@@ -278,19 +295,21 @@ int main(void)
                 }
             }*/
             
+            // HUOM! Jos vaihdoit päikseen, muista myös täällä
             // Set digital pins 6-9 (rows) as output and 10-13 (columns) as input
             DDRD |= 0b00000000;
             DDRB |= 0b001111;
-            _delay_ms(1);
+            _delay_ms(10);
             
             // Power the row pins
             PORTD = 0b00000011;
             PORTB = 0b00110000;
+            _delay_ms(10);
             
             key_pressed = 0;
             idx +=1;
             //printf("%i \n", idx);
-            _delay_ms(10);
+            _delay_ms(100);
         }
     }
 }
