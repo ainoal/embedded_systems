@@ -13,8 +13,9 @@
 #include <stdio.h>
 #include <string.h>
 
-#define BITMASK_D 0b00000011
-#define BITMASK_B 0b00111111
+
+#define BITMASK_D 0b00001111
+#define BITMASK_B 0b00001111
 
 void led_test(void){
     PORTD &= ~(1 << PD3);
@@ -60,25 +61,32 @@ int main(void)
     char* given_password = "xxxx";
     int idx = 0;
     
-    // Set digital pins 6-9 (rows) as output and 10-13 (columns) as input
-    DDRD = 0b00000000;
-    DDRB = 0b001111;
-    _delay_ms(10);
-    
-    // Set digital pins 6-9 (rows) as input and 10-13 (columns) as output
-    /*DDRD = 0b00000011;
-    DDRB = 0b110000;
-    _delay_ms(10);*/
+    // CONFIG FOR READING COLUMNS (portB permanently high + portD will be able to read):
+    DDRB |= 0b00000100; // PB2 as output
+    DDRB |= 0b00001000; // PB3 as output
+    DDRB |= 0b00010000; // PB4 as output
+    DDRB |= 0b00100000; // PB5 as output
+    _delay_ms(1);
+    PORTB |= 0b00000100; // PB2 high output
+    PORTB |= 0b00001000; // PB3 high output
+    PORTB |= 0b00010000; // PB4 high output
+    PORTB |= 0b00100000; // PB5 high output
+    _delay_ms(1);
+    DDRD &= 0b11101111; // PD4 as input
+    DDRD &= 0b11011111; // PD5 as input
+    DDRD &= 0b10111111; // PD6 as input
+    DDRD &= 0b01111111; // PD7 as input
+    _delay_ms(1);
+  
+    // Set digital pins 4-7 (rows) as output and 10-13 (columns) as input
+    // DDRD = 0b00000000;
+    // DDRB = 0b00001111;
+    // _delay_ms(100);
     
     // Power the row pins
-    PORTD = 0b00000011;
-    PORTB = 0b00110000;
-    _delay_ms(10);
-    
-    // Power the column pins
-    /*PORTD = 0b00000000;
-    PORTB = 0b00001111;
-    _delay_ms(10);*/
+    // PORTD = 0b00001111;
+    // PORTB = 0b00000000;
+    // _delay_ms(100);
     
     uint8_t key_pressed = 0;
     uint8_t keypad_vals;
@@ -87,46 +95,77 @@ int main(void)
     
     while (1) 
     { 
-        _delay_ms(100);
-        printf("PIND %d ", PIND);
-        portd_vals = ((PIND & BITMASK_D) << 6);
+        // READ THE COLUMNS:
+        portd_vals = ((PIND & 0b11110000)); // hardcoded mask
+        keypad_vals = portd_vals; // [columns_bit4 zeros_bit4]
+            
+        printf("PIND %d\n\r", PIND);
+        
+        // _delay_ms(100);
+        /* portd_vals = ((PORTD & BITMASK_D) << 4);
         printf("portd_vals %d ", portd_vals);
         _delay_ms(100);
         
-        printf("PINB %d ", PINB);
-        portb_vals = PINB & BITMASK_B;
+        portb_vals = ((PORTB & BITMASK_B) << 2);
         printf("portb_vals %d ", portb_vals);
-        _delay_ms(100);
-
+        _delay_ms(10);
         keypad_vals = portd_vals | portb_vals;
         
         printf("Keypad_vals %d ", keypad_vals);
-        //keypad_vals &= 0b11110000;
+        keypad_vals &= 0b00001111;
         printf("Keypad_vals %d\n\r", keypad_vals);
-        //printf("%d %d %d\n\r", keypad_vals, portd_vals, portb_vals);
-        if (keypad_vals != 0b00000000) {     // If any of row pins goes low (!??)
+        //printf("%d %d %d PIND: %d\n\r", keypad_vals, portd_vals, portb_vals, PIND);*/
+        
+        if (keypad_vals == 0b00000000) {     // If any of row pins goes low (!??)
+            
             printf("loop\n\r");
-            key_pressed = keypad_vals;
-            printf("%d\n\r", keypad_vals);
-            _delay_ms(10);
+            
+            // CONFIG FOR READING ROWS (portD permanently high + portB will be able to read):
+            DDRD |= 0b00010000; // PD4 as output
+            DDRD |= 0b00100000;// PD5 as output
+            DDRD |= 0b01000000; // PD6 as output
+            DDRD |= 0b10000000; // PD7 as output
+            _delay_ms(1);
+            PORTD |= 0b00010000; // PD4 high output
+            PORTD |= 0b00100000; // PD5 high output
+            PORTD |= 0b01000000; // PD6 high output
+            PORTD |= 0b10000000; // PD7 high output
+            _delay_ms(1);    
+            DDRB &= 0b11111011; // PB2 as input
+            DDRB &= 0b11110111; // PB3 as input
+            DDRB &= 0b11110111; // PB4 as input
+            DDRB &= 0b11101111; // PB5 as input
+            _delay_ms(1);
+            
+            // READ THE ROWS:
+            portb_vals = ((PINB & 0b00111100)>>2); // hardcoded mask [zero_bit4 rows_bit4]
+            
+            // CONCATENATE COLUMNS AND ROWS
+            key_pressed = keypad_vals | portb_vals; // [columns_bit4 row_bit4]
+            
+            printf("%d\n\r", PINB);
+            
+            // 
+            
+            //_delay_ms(10);
             
             // Make rows as inputs and columns as outputs
-            DDRD ^= 0b00000011;
-            DDRB ^= 0b00111111;
+            // DDRD ^= 0b00000011;
+            // DDRB ^= 0b00111111;
             
-            _delay_ms(10);
-             PORTB ^= 0b00001111;        // Power the columns
-            _delay_ms(100);
+            // _delay_ms(1);
+            // PORTB ^= 0b00001111;        // Power the columns
+            // _delay_ms(100);
             
-            portd_vals = ((PIND & BITMASK_D) << 6);
-            portb_vals = PINB & BITMASK_B;
-            keypad_vals = portd_vals | portb_vals;
-            keypad_vals &= 0b11110000;
+            // portd_vals = ((PIND & BITMASK_D) << 6);
+            // portb_vals = PINB & BITMASK_B;
+            // keypad_vals = portd_vals | portb_vals;
+            // keypad_vals &= 0b11110000;
             
-            key_pressed |= keypad_vals;    // The variable has now both row and column values as 0, others as 1
-            printf("%d\n\r", key_pressed);
+            // key_pressed |= keypad_vals;    // The variable has now both row and column values as 0, others as 1
             
-            if (key_pressed == 0b01110111) {
+            
+            /*if (key_pressed == 0b01110111) {
                 // Key 1 pressed
                 given_password[idx] = '1';
                 if (password[idx] == '1') {
@@ -283,7 +322,7 @@ int main(void)
                 else {
                     ;
                 }
-            }
+            }*/
             
             /*if (PIND != 0b11110000) {
                 
@@ -295,22 +334,36 @@ int main(void)
                 }
             }*/
             
-            // HUOM! Jos vaihdoit päikseen, muista myös täällä
             // Set digital pins 6-9 (rows) as output and 10-13 (columns) as input
-            DDRD |= 0b00000000;
-            DDRB |= 0b001111;
-            _delay_ms(10);
+            // DDRD |= 0b00000000;
+            // DDRB |= 0b001111;
+            // _delay_ms(1);
             
             // Power the row pins
-            PORTD = 0b00000011;
-            PORTB = 0b00110000;
-            _delay_ms(10);
+            // PORTD = 0b00000011;
+            // PORTB = 0b00110000;
             
-            key_pressed = 0;
-            idx +=1;
+            // key_pressed = 0;
+            // idx +=1;
             //printf("%i \n", idx);
-            _delay_ms(100);
-        }
+            //_delay_ms(10);
+            
+            // CONFIG FOR READING COLUMNS (portB permanently high + portD will be able to read):
+            DDRB |= 0b00000100; // PB2 as output
+            DDRB |= 0b00001000; // PB3 as output
+            DDRB |= 0b00010000; // PB4 as output
+            DDRB |= 0b00100000; // PB5 as output
+            _delay_ms(1);
+            PORTB |= 0b00000100; // PB2 high output
+            PORTB |= 0b00001000; // PB3 high output
+            PORTB |= 0b00010000; // PB4 high output
+            PORTB |= 0b00100000; // PB5 high output
+            _delay_ms(1);
+            DDRD &= 0b11101111; // PD4 as input
+            DDRD &= 0b11011111; // PD5 as input
+            DDRD &= 0b10111111; // PD6 as input
+            DDRD &= 0b01111111; // PD7 as input
+            _delay_ms(1);   
+       }
     }
 }
-
