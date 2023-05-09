@@ -7,8 +7,6 @@
  * https://circuitdigest.com/microcontroller-projects/keypad-interfacing-with-avr-atmega32
  */ 
 
-//#define F_CPU 1000000
-
 #include "uart.h"
 #include <avr/io.h>
 #include <util/delay.h>
@@ -17,7 +15,7 @@
 
 
 #define BITMASK_D 0b00000011
-#define BITMASK_B 0b111111
+#define BITMASK_B 0b00111111
 
 void led_test(void){
     PORTD &= ~(1 << PD3);
@@ -64,14 +62,15 @@ int main(void)
     int idx = 0;
     
     // Set digital pins 6-9 (rows) as output and 10-13 (columns) as input
-    DDRD |= 0b00000000;
-    DDRB |= 0b001111;
-    _delay_ms(1);
+    DDRD = 0b00000000;
+    DDRB = 0b001111;
+    _delay_ms(100);
     
     // Power the row pins
     //PORTD |= (1 << PD6) | (1 << PD7);
     PORTD = 0b00000011;
     PORTB = 0b00110000;
+    _delay_ms(100);
     
     uint8_t key_pressed = 0;
     uint8_t keypad_vals;
@@ -80,14 +79,15 @@ int main(void)
     
     while (1) 
     { 
+        _delay_ms(100);
         portd_vals = ((PIND & BITMASK_D) << 6);
         portb_vals = PINB & BITMASK_B;
         keypad_vals = portd_vals | portb_vals;
         
-        printf("Keypad_vals %d\n\r", keypad_vals);
+        printf("Keypad_vals %d", keypad_vals);
         keypad_vals &= 0b00001111;
-        
-        printf("%d %d %d PIND: %d\n\r", keypad_vals, portd_vals, portb_vals, PIND);
+        printf("Keypad_vals %d\n\r", keypad_vals);
+        //printf("%d %d %d PIND: %d\n\r", keypad_vals, portd_vals, portb_vals, PIND);
         if (keypad_vals != 0b00000000) {     // If any of row pins goes low (!??)
             printf("loop\n\r");
             key_pressed = keypad_vals;
