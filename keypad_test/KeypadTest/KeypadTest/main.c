@@ -60,15 +60,15 @@ int main(void)
     char* given_password = "xxxx";
     int idx = 0;
     
-    // Set digital pins 6-9 (rows) as input and 10-13 (columns) as output
-    DDRD &= 0b00111111;
-    DDRB = 0b00111100;
+    // Set digital pins 6-9 (rows) as output and 10-13 (columns) as input
+    DDRD |= 0b11000000;
+    DDRB = 0b00000011;
     _delay_ms(10);
      
     // Power the row pins
     PORTD |= 0b11000000;
     PORTB |= 0b00000011;
-    PORTB &= 0b11000011;
+    //PORTB &= 0b11000011;
     _delay_ms(10);
                 
     // Power the column pins
@@ -90,7 +90,7 @@ int main(void)
         keypad_vals = portd_vals | portb_vals;
         
         //printf("Keypad_vals %d ", keypad_vals);
-        keypad_vals &= 0b00001111;
+        keypad_vals &= 0b11110000;
         printf("kp_vals: %d  portd_vals: %d  portb_vals: %d  PINB: %d\n\r", keypad_vals, portd_vals, portb_vals, PINB);
         
         
