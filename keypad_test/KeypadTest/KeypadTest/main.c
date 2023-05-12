@@ -26,19 +26,19 @@ void led_test(void){
     _delay_ms(1000);
 }
 
-int compare(char *password, char *given_password){
-    if (strcmp(password, given_password) != 0) {
+int compare(char *password, char *given_password, size_t n){
+    if (strncmp(password, given_password, n) != 0) {
+        /*led_test();
         led_test();
         led_test();
         led_test();
         led_test();
         led_test();
-        led_test();
-        led_test();
-        return 0;
+        led_test();*/
+        return 1;
     }
     else {
-        return 1;
+        return 0;
     }
 }
 
@@ -57,7 +57,7 @@ int main(void)
     /******************************************************/
     
     char* password = "0123";
-    char* given_password = "xxxx";
+    char given_password[30];
     int idx = 0;
     
     // Set digital pins 6-9 (rows) as input and 10-13 (columns) as output
@@ -239,15 +239,11 @@ int main(void)
                 }
             }
             else if (key_pressed == 0b11100111) {
-                // *
-                printf("*");
-                // TODO: make this the backspace button
-                given_password[idx] = '*';
-                if (password[idx] == '*') {
-                }
-                else {
-                    ;
-                }
+                // Backspace button (*)
+                //printf("*");
+                given_password[idx - 1] = "";
+                idx -= 2;
+                printf("\n\r%s\n\r", given_password);
             }
             else if (key_pressed == 0b11101011) {
                 // 0
@@ -262,8 +258,8 @@ int main(void)
             else if (key_pressed == 0b11101101) {
                 // #
                 printf("#");
-                compare(password, given_password);
-                //printf("#");
+                int pw_validity = compare(password, given_password, idx);
+                printf("\n\rpw_validity %d\n\r", pw_validity);
                 //given_password[idx] = '#';
                 //led_test();
             }
@@ -295,7 +291,7 @@ int main(void)
             key_pressed = 0;
             idx +=1;
             //printf("%i \n", idx);
-            _delay_ms(100);
+            _delay_ms(500);
         }
     }
 }
